@@ -4,14 +4,13 @@ import java.util.Scanner;
 import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.time.Period;
-import java.time.format.DateTimeParseException;
 
 public class Employee {
 
 	private String name;
 	private String surname;
 	private String role;
-	private PastCompany[] pastCompanies;
+	private Company[] pastCompanies;
 	private double yearsOfWork = 0;
 	private int vacationDays = 20;
 
@@ -20,78 +19,14 @@ public class Employee {
 		this.name = name;
 		this.surname = surname;
 		this.role = role;
-		this.pastCompanies = new PastCompany[numOfPastCompanies];
+		this.pastCompanies = new Company[numOfPastCompanies];
 	}
 
-	public void addManulaPastCompany(PastCompany p1) {
+	public void addManualCompany(Company p1) {
 		for (int i = 0; i < pastCompanies.length; i++) {
 			if (pastCompanies[i] == null) {
 				pastCompanies[i] = p1;
 				return;
-			}
-		}
-	}
-
-	public static boolean isDigits(String check) {
-
-		char[] array = check.toCharArray();
-
-		for (int i = 0; i < array.length; i++) {
-			if (Character.isDigit(array[i])) {
-				return true;
-			}
-		}
-
-		return false;
-
-	}
-
-	public static String inputString() {
-		Scanner input = new Scanner(System.in);
-		while (true) {
-			try {
-				String newInput = input.nextLine();
-				if (newInput.length() <= 3 || newInput == null) {
-					throw new InvalidInputException("Invalid input, can't be null , 4 characters minimum");
-				} else if (isDigits(newInput) == true) {
-					throw new InvalidInputException("Invalid input,contains numbers");
-				} else {
-
-					return newInput;
-				}
-			} catch (java.util.InputMismatchException e) {
-				System.err.println(e.getMessage());
-				continue;
-			} catch (InvalidInputException e) {
-				System.err.println(e.getMessage());
-				continue;
-			}
-		}
-	}
-
-	public static int inputInt() {
-		Scanner input = new Scanner(System.in);
-
-		while (true) {
-
-			while (!input.hasNextInt()) {
-				System.err.println("Invalid value,it must be a integer");
-				input = new Scanner(System.in);
-			}
-			try {
-				int newInput = input.nextInt();
-				if (newInput < 0) {
-					throw new InvalidInputException(
-							"Invalid input, number of companies must be more 0 or more than 0!");
-				} else {
-					return newInput;
-				}
-			} catch (java.util.InputMismatchException e) {
-				System.err.println(e.getMessage());
-				continue;
-			} catch (InvalidInputException e) {
-				System.err.println(e.getMessage());
-				continue;
 			}
 		}
 	}
@@ -124,7 +59,7 @@ public class Employee {
 			for (int i = 0; i < array.length; i++) {
 
 				System.out.println("Company name number " + (i + 1));
-				String compName = Employee.inputString();
+				String compName = Utility.inputString();
 
 				if (checkDuplicateCompanyName(compName)) {
 					System.err.println("Company with that name already exists , try again");
@@ -133,10 +68,10 @@ public class Employee {
 				}
 
 				System.out.println("Add start date in uuuu-MM-dd format");
-				LocalDate start = Employee.inputDate();
+				LocalDate start = Utility.inputDate();
 
 				System.out.println("Add end date in uuuu-MM-dd format");
-				LocalDate end = Employee.inputDate();
+				LocalDate end = Utility.inputDate();
 
 				if (start.isAfter(nowDate)) {
 					System.err.println("Start date is invalid,try again");
@@ -152,7 +87,7 @@ public class Employee {
 					continue;
 				}
 
-				PastCompany pc = new PastCompany(compName, start, end);
+				Company pc = new Company(compName, start, end);
 
 				if (isDateValid(pc)) {
 					addPastCompanyDatePeriod(pc);
@@ -168,7 +103,7 @@ public class Employee {
 
 	}
 
-	public void addPastCompanyDatePeriod(PastCompany p1) {
+	public void addPastCompanyDatePeriod(Company p1) {
 
 		for (int i = 0; i < pastCompanies.length; i++) {
 			if (pastCompanies[i] == null) {
@@ -179,7 +114,7 @@ public class Employee {
 
 	}
 
-	public boolean isDateValid(PastCompany p1) {
+	public boolean isDateValid(Company p1) {
 
 		for (int i = 0; i < pastCompanies.length; i++) {
 
@@ -201,26 +136,6 @@ public class Employee {
 
 	}
 
-	public static LocalDate inputDate() {
-
-		Scanner input = new Scanner(System.in);
-
-		String date = "";
-
-		while (true) {
-			date = input.next().trim();
-			try {
-				LocalDate l1 = LocalDate.parse(date);
-				return l1;
-
-			} catch (DateTimeParseException e) {
-				System.err.println("Invalid date try again");
-			}
-
-		}
-
-	}
-
 	public double calculateExperience() {
 
 		double years = 0;
@@ -235,20 +150,6 @@ public class Employee {
 
 		}
 		return years + months / 12 + days / 31;
-	}
-
-	public static double calculateBetweenDates(LocalDate start, LocalDate end) {
-
-		double years = 0;
-		double months = 0;
-		double days = 0;
-
-		years = Period.between(start, end).getYears();
-		months = Period.between(start, end).getMonths();
-		days = Period.between(start, end).getDays();
-
-		return years + months / 12 + days / 31;
-
 	}
 
 	public void showPastCompanies() {
@@ -277,11 +178,11 @@ public class Employee {
 		this.yearsOfWork = yearsOfWork;
 	}
 
-	public PastCompany[] getPastCompanies() {
+	public Company[] getPastCompanies() {
 		return pastCompanies;
 	}
 
-	public void setPastCompanies(PastCompany[] pastCompanies) {
+	public void setPastCompanies(Company[] pastCompanies) {
 		this.pastCompanies = pastCompanies;
 	}
 

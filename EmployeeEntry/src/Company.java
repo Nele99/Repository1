@@ -1,3 +1,5 @@
+import java.text.DecimalFormat;
+import java.time.LocalDate;
 import java.util.Arrays;
 
 public class Company {
@@ -6,6 +8,8 @@ public class Company {
 	private Employee[] employees;
 	private int companyMaximum;
 	private int bonusVacationDays;
+	private LocalDate startDate;
+	private LocalDate endDate;
 
 	public Company(String name, int companyMaximum, int bonusVacationDays) {
 		super();
@@ -13,6 +17,21 @@ public class Company {
 		this.employees = new Employee[companyMaximum];
 		this.companyMaximum = companyMaximum;
 		this.bonusVacationDays = bonusVacationDays;
+
+	}
+
+	public Company(String name, String start, String end) {
+		super();
+		this.name = name;
+		this.startDate = LocalDate.parse(start);
+		this.endDate = LocalDate.parse(end);
+	}
+
+	public Company(String name, LocalDate startDate, LocalDate endDate) {
+		super();
+		this.name = name;
+		this.startDate = startDate;
+		this.endDate = endDate;
 	}
 
 	public void addEmployee(Employee e1) {
@@ -58,6 +77,41 @@ public class Company {
 			}
 		}
 
+	}
+
+	@Override
+	public String toString() {
+
+		DecimalFormat df = new DecimalFormat("0.00");
+
+		return name + ", startDate: " + startDate + ", endDate: " + endDate + ", years: "
+				+ df.format(Utility.calculateBetweenDates(startDate, endDate));
+	}
+	
+	
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public LocalDate getStartDate() {
+		return startDate;
+	}
+
+	public void setStartDate(LocalDate startDate) {
+		this.startDate = startDate;
+	}
+
+	public LocalDate getEndDate() {
+		return endDate;
+	}
+
+	public void setEndDate(LocalDate endDate) {
+		this.endDate = endDate;
 	}
 
 }
