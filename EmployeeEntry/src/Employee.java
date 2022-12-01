@@ -1,212 +1,217 @@
-
-import java.util.Arrays;
-import java.util.Scanner;
 import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.time.Period;
+import java.util.Scanner;
 
 public class Employee {
 
-	private String name;
-	private String surname;
-	private String role;
-	private Company[] pastCompanies;
-	private double yearsOfWork = 0;
-	private int vacationDays = 20;
+    private String name;
+    private String surname;
+    private String role;
+    private Company[] pastCompanies;
+    private double yearsOfWork = 0;
+    private int vacationDays = 20;
 
-	public Employee(String name, String surname, String role, int numOfPastCompanies) {
-		super();
-		this.name = name;
-		this.surname = surname;
-		this.role = role;
-		this.pastCompanies = new Company[numOfPastCompanies];
-	}
+    public Employee(String name, String surname, String role, int numOfPastCompanies) {
+        super();
+        this.name = name;
+        this.surname = surname;
+        this.role = role;
+        this.pastCompanies = new Company[numOfPastCompanies];
+    }
 
-	public void addManualCompany(Company p1) {
-		for (int i = 0; i < pastCompanies.length; i++) {
-			if (pastCompanies[i] == null) {
-				pastCompanies[i] = p1;
-				return;
-			}
-		}
-	}
+    public void addManualCompany(Company p1) {
+        for (int i = 0; i < pastCompanies.length; i++) {
+            if (pastCompanies[i] == null) {
+                pastCompanies[i] = p1;
+                return;
+            }
+        }
+    }
 
-	public boolean checkDuplicateCompanyName(String newName) {
+    public boolean checkDuplicateCompanyName(String newName) {
 
-		for (int i = 0; i < pastCompanies.length; i++) {
-			if (pastCompanies[i] != null) {
-				if (pastCompanies[i].getName().equalsIgnoreCase(newName)) {
-					return true;
-				}
-			}
-		}
+        for (int i = 0; i < pastCompanies.length; i++) {
+            if (pastCompanies[i] != null) {
+                if (pastCompanies[i].getName().equalsIgnoreCase(newName)) {
+                    return true;
+                }
+            }
+        }
 
-		return false;
+        return false;
 
-	}
+    }
 
-	public boolean addPastCompany(int newArraySize) {
-		Scanner input = new Scanner(System.in);
-		LocalDate nowDate = LocalDate.now();
+    public boolean addPastCompany(int newArraySize) {
+        Scanner input = new Scanner(System.in);
 
-		if (newArraySize == 0) {
-			System.out.println("No past experience");
-			return false;
-		} else {
+        if (newArraySize == 0) {
+            System.out.println("No past experience");
+            return false;
+        } else {
 
-			int[] array = new int[newArraySize];
+            int[] array = new int[newArraySize];
 
-			for (int i = 0; i < array.length; i++) {
+            for (int i = 0; i < array.length; i++) {
 
-				System.out.println("Company name number " + (i + 1));
-				String compName = Utility.inputString();
+                System.out.println("Company name number " + (i + 1));
+                String compName = Utility.inputString();
 
-				if (checkDuplicateCompanyName(compName)) {
-					System.err.println("Company with that name already exists , try again");
-					i--;
-					continue;
-				}
+                if (Utility.isDigits(compName) == true) {
+                    System.err.println("Company name can't be digits only");
+                    i--;
+                    continue;
+                }
 
-				System.out.println("Add start date in uuuu-MM-dd format");
-				LocalDate start = Utility.inputDate();
+                if (checkDuplicateCompanyName(compName)) {
+                    System.err.println("Company with that name already exists , try again");
+                    i--;
+                    continue;
+                }
 
-				System.out.println("Add end date in uuuu-MM-dd format");
-				LocalDate end = Utility.inputDate();
+                System.out.println("Add start date");
+                LocalDate start = Utility.inputDate();
 
-				if (start.isAfter(nowDate)) {
-					System.err.println("Start date is invalid,try again");
-					i--;
-					continue;
-				} else if (end.isBefore(start) || end.isAfter(nowDate)) {
-					System.err.println("End date is invalid,try again");
-					i--;
-					continue;
-				} else if (start.isEqual(end)) {
-					System.err.println("Start and end date can't be on the same day,try again");
-					i--;
-					continue;
-				}
+                while (true) {
+                    if (start.isAfter(LocalDate.now())) {
+                        System.err.println("Start date is invalid,try again");
+                        start = Utility.inputDate();
+                    } else {
+                        break;
+                    }
+                }
 
-				Company pc = new Company(compName, start, end);
+                System.out.println("Add end date");
+                LocalDate end = Utility.inputDate();
 
-				if (isDateValid(pc)) {
-					addPastCompanyDatePeriod(pc);
-				} else {
-					System.err.println("Date period is invalid,already exists,try again");
-					i--;
-					continue;
-				}
+                while (true) {
+                    if (end.isBefore(start) || end.isAfter(LocalDate.now())) {
+                        System.err.println("End date is invalid,try again");
+                        end = Utility.inputDate();
+                    } else {
+                        break;
+                    }
+                }
 
-			}
-			return true;
-		}
 
-	}
+                Company pc = new Company(compName, start, end);
 
-	public void addPastCompanyDatePeriod(Company p1) {
+                if (isDateValid(pc)) {
+                    addPastCompanyDatePeriod(pc);
+                } else {
+                    System.err.println("Date period is invalid,already exists,try again");
+                    i--;
+                    continue;
+                }
 
-		for (int i = 0; i < pastCompanies.length; i++) {
-			if (pastCompanies[i] == null) {
-				pastCompanies[i] = p1;
-				return;
-			}
-		}
+            }
+            return true;
+        }
 
-	}
+    }
 
-	public boolean isDateValid(Company p1) {
 
-		for (int i = 0; i < pastCompanies.length; i++) {
+    public void addPastCompanyDatePeriod(Company p1) {
+        for (int i = 0; i < pastCompanies.length; i++) {
+            if (pastCompanies[i] == null) {
+                pastCompanies[i] = p1;
+                return;
+            }
+        }
+    }
 
-			if (pastCompanies[i] == null && i == 0) {
-				return true;
-			}
+    public boolean isDateValid(Company p1) {
 
-			if (pastCompanies[i] != null) {
-				if ((p1.getStartDate().isAfter(pastCompanies[i].getEndDate())
-						&& p1.getEndDate().isAfter(pastCompanies[i].getEndDate()))
-						|| (p1.getStartDate().isBefore(pastCompanies[i].getStartDate())
-								&& p1.getEndDate().isBefore(pastCompanies[i].getStartDate()))) {
-					return true;
-				}
-			}
-		}
+        for (int i = 0; i < pastCompanies.length; i++) {
 
-		return false;
+            if (pastCompanies[i] == null && i == 0) {
+                return true;
+            }
 
-	}
+            if (pastCompanies[i] != null) {
+                if ((p1.getStartDate().isAfter(pastCompanies[i].getEndDate()) && p1.getEndDate().isAfter(pastCompanies[i].getEndDate()))
+                        || (p1.getStartDate().isBefore(pastCompanies[i].getStartDate()) && p1.getEndDate().isBefore(pastCompanies[i].getStartDate()))) {
+                    return true;
+                }
+            }
+        }
 
-	public double calculateExperience() {
+        return false;
 
-		double years = 0;
-		double months = 0;
-		double days = 0;
+    }
 
-		for (int i = 0; i < pastCompanies.length; i++) {
+    public double calculateExperience() {
 
-			days += Period.between(pastCompanies[i].getStartDate(), pastCompanies[i].getEndDate()).getDays();
-			months += Period.between(pastCompanies[i].getStartDate(), pastCompanies[i].getEndDate()).getMonths();
-			years += Period.between(pastCompanies[i].getStartDate(), pastCompanies[i].getEndDate()).getYears();
+        double years = 0;
+        double months = 0;
+        double days = 0;
 
-		}
-		return years + months / 12 + days / 31;
-	}
+        for (int i = 0; i < pastCompanies.length; i++) {
 
-	public void showPastCompanies() {
+            days += Period.between(pastCompanies[i].getStartDate(), pastCompanies[i].getEndDate()).getDays();
+            months += Period.between(pastCompanies[i].getStartDate(), pastCompanies[i].getEndDate()).getMonths();
+            years += Period.between(pastCompanies[i].getStartDate(), pastCompanies[i].getEndDate()).getYears();
 
-		for (int i = 0; i < pastCompanies.length; i++) {
-			if (pastCompanies[i] != null) {
-				System.out.println(pastCompanies[i]);
-			}
-		}
+        }
+        return years + months / 12 + days / 31;
+    }
 
-	}
+    public void showPastCompanies() {
 
-	public int getVacationDays() {
-		return vacationDays;
-	}
+        for (int i = 0; i < pastCompanies.length; i++) {
+            if (pastCompanies[i] != null) {
+                System.out.println(pastCompanies[i]);
+            }
+        }
 
-	public void setVacationDays(int vacationDays) {
-		this.vacationDays = vacationDays;
-	}
+    }
 
-	public double getYearsOfWork() {
-		return yearsOfWork;
-	}
+    public int getVacationDays() {
+        return vacationDays;
+    }
 
-	public void setYearsOfWork(double yearsOfWork) {
-		this.yearsOfWork = yearsOfWork;
-	}
+    public void setVacationDays(int vacationDays) {
+        this.vacationDays = vacationDays;
+    }
 
-	public Company[] getPastCompanies() {
-		return pastCompanies;
-	}
+    public double getYearsOfWork() {
+        return yearsOfWork;
+    }
 
-	public void setPastCompanies(Company[] pastCompanies) {
-		this.pastCompanies = pastCompanies;
-	}
+    public void setYearsOfWork(double yearsOfWork) {
+        this.yearsOfWork = yearsOfWork;
+    }
 
-	@Override
-	public String toString() {
+    public Company[] getPastCompanies() {
+        return pastCompanies;
+    }
 
-		DecimalFormat df = new DecimalFormat("0.00");
+    public void setPastCompanies(Company[] pastCompanies) {
+        this.pastCompanies = pastCompanies;
+    }
 
-		String s = "Employee: " + name.toUpperCase() + " " + surname.toUpperCase() + "\nRole: " + role
-				+ "\nYearsOfWork: " + df.format(yearsOfWork) + "\nVacationDays: " + vacationDays + "\nPastCompanies:"
-				+ "\n";
+    @Override
+    public String toString() {
 
-		if (pastCompanies.length == 0) {
-			s += "-----No experience-----" + "\n";
-			return s;
-		}
+        DecimalFormat df = new DecimalFormat("0.00");
 
-		for (int i = 0; i < pastCompanies.length; i++) {
-			if (pastCompanies[i] != null) {
-				s += pastCompanies[i] + "\n";
-			}
-		}
+        String s = "Employee: " + name.toUpperCase() + " " + surname.toUpperCase() + "\nRole: " + role
+                + "\nYearsOfWork: " + df.format(yearsOfWork) + "\nVacationDays: " + vacationDays + "\nPastCompanies:"
+                + "\n";
 
-		return s;
+        if (pastCompanies.length == 0) {
+            s += "-----No experience-----" + "\n";
+            return s;
+        }
 
-	}
+        for (int i = 0; i < pastCompanies.length; i++) {
+            if (pastCompanies[i] != null) {
+                s += pastCompanies[i] + "\n";
+            }
+        }
+
+        return s;
+
+    }
 }

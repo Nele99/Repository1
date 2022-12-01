@@ -1,6 +1,5 @@
 import java.text.DecimalFormat;
 import java.time.LocalDate;
-import java.util.Arrays;
 
 public class Company {
 
@@ -11,13 +10,12 @@ public class Company {
 	private LocalDate startDate;
 	private LocalDate endDate;
 
-	public Company(String name, int companyMaximum, int bonusVacationDays) {
+	public Company(String name, int companyMaximum, int bonusVacationDays){
 		super();
 		this.name = name;
 		this.employees = new Employee[companyMaximum];
 		this.companyMaximum = companyMaximum;
 		this.bonusVacationDays = bonusVacationDays;
-
 	}
 
 	public Company(String name, String start, String end) {
