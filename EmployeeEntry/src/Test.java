@@ -2,7 +2,6 @@ public class Test {
 
     public void Test() {
 
-
         Employee emp1 = new Employee("Marko", "Zizic", "Software", 2);
         Employee emp2 = new Employee("Evdin", "Mandzukic", "Tech support", 2);
         Employee emp3 = new Employee("Lara", "Croft", "Testing", 2);
@@ -71,6 +70,7 @@ public class Test {
         mainComp.updateVacationDays();
 
         mainComp.showMainComp();
+
 
         // emp1.showPastCompanies();
 

@@ -164,7 +164,6 @@ public class Employee {
                 System.out.println(pastCompanies[i]);
             }
         }
-
     }
 
     public int getVacationDays() {
