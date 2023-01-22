@@ -85,8 +85,10 @@ public class Company {
 		return name + ", startDate: " + startDate + ", endDate: " + endDate + ", years: "
 				+ df.format(Utility.calculateBetweenDates(startDate, endDate));
 	}
-	
-	
+
+	public Employee[] getEmployees() {
+		return employees;
+	}
 
 	public String getName() {
 		return name;

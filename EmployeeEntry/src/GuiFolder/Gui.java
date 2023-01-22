@@ -1,19 +1,29 @@
 package GuiFolder;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 
 public class Gui extends JFrame implements ActionListener {
 
     JRadioButton inputEmployee;
     JRadioButton showAllEmployees;
+    static String employeeInfo = "";
+    static int numPastCompanies = 0;
+
 
     public Gui() {
         this.setTitle("Employee Entry");
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setVisible(true);
-        this.setSize(500, 200);
+        this.setSize(500, 100);
         this.setLayout(new FlowLayout());
         this.setLocationRelativeTo(null);
         inputEmployee = new JRadioButton("Input employee");
@@ -31,104 +41,164 @@ public class Gui extends JFrame implements ActionListener {
         this.add(showAllEmployees);
     }
 
-    public static void showAllInfo() {
+    public static void showAllInfo(String newInfo) {
 
-        String[][] data = {
-                {"Nebojsa", "Nedic", "15", "Dev-ops", "6.87", "22"},
-                {"Marko", "Markovic", "25", "QA", "4", "21"},
-                {"Nikolina", "Nikolic", "35", "Testing", "1.2", "20"},
-                {"Nebojsa", "Nedic", "15", "Dev-ops", "6.87", "22"},
-                {"Marko", "Markovic", "25", "QA", "4", "21"},
-                {"Nikolina", "Nikolic", "35", "Testing", "1.2", "20"},
-                {"Nebojsa", "Nedic", "15", "Dev-ops", "6.87", "22"},
-                {"Marko", "Markovic", "25", "QA", "4", "21"},
-                {"Nikolina", "Nikolic", "35", "Testing", "1.2", "20"},
-                {"Nebojsa", "Nedic", "15", "Dev-ops", "6.87", "22"},
-                {"Marko", "Markovic", "25", "QA", "4", "21"},
-                {"Nikolina", "Nikolic", "35", "Testing", "1.2", "20"},
-                {"Nebojsa", "Nedic", "15", "Dev-ops", "6.87", "22"},
-                {"Marko", "Markovic", "25", "QA", "4", "21"},
-                {"Nikolina", "Nikolic", "35", "Testing", "1.2", "20"},
-                {"Nebojsa", "Nedic", "15", "Dev-ops", "6.87", "22"},
-                {"Marko", "Markovic", "25", "QA", "4", "21"},
-                {"Nikolina", "Nikolic", "35", "Testing", "1.2", "20"},
-                {"Nebojsa", "Nedic", "15", "Dev-ops", "6.87", "22"},
-                {"Marko", "Markovic", "25", "QA", "4", "21"},
-                {"Nikolina", "Nikolic", "35", "Testing", "1.2", "20"},
-                {"Nebojsa", "Nedic", "15", "Dev-ops", "6.87", "22"},
-                {"Marko", "Markovic", "25", "QA", "4", "21"},
-                {"Nikolina", "Nikolic", "35", "Testing", "1.2", "20"},
-                {"Nebojsa", "Nedic", "15", "Dev-ops", "6.87", "22"},
-                {"Marko", "Markovic", "25", "QA", "4", "21"},
-                {"Nikolina", "Nikolic", "35", "Testing", "1.2", "20"},
-        };
+        String[][] data = new String[20][5];
+        String[] columnNames = {"Name", "Surname", "Role", "Experience", "Vacation days"};
 
-        String[] columnNames = {"Name", "Surname", "Age", "Role", "Experience", "Vacation days"};
+        if (newInfo.isEmpty()) {
+            try (BufferedReader b = new BufferedReader(new FileReader("src/GuiFolder/EmployeeData"))) {
+                for (int i = 0; i < 4; i++) {
+                    for (int j = 0; j < 5; j++) {
+                        data[i][j] = b.readLine();
+                    }
+                }
+
+            } catch (FileNotFoundException e) {
+                System.out.println("File not found: file.txt");
+            } catch (IOException e) {
+                System.out.println("Error reading file: file.txt");
+            }
+        } else {
+           // newInfo = newInfo + "/aa/aaa";
+            String[] newEmployee = newInfo.split("/");
+
+            try (BufferedReader b = new BufferedReader(new FileReader("src/GuiFolder/EmployeeData"))) {
+                for (int i = 0; i < 4; i++) {
+                    for (int j = 0; j < 5; j++) {
+                        data[i][j] = b.readLine();
+                    }
+                }
+
+            } catch (FileNotFoundException e) {
+                System.out.println("File not found: file.txt");
+            } catch (IOException e) {
+                System.out.println("Error reading file: file.txt");
+            }
+
+            boolean emptyRowFound = false;
+
+            for (int i = 0; i < 20 && !emptyRowFound; i++) {
+                for (int j = 0; j < 5; j++) {
+                    if (data[i][j] == null) {
+                        data[i][j] = newEmployee[j];
+                        if (j == 4){
+                            emptyRowFound = true;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
 
         JTable table = new JTable(data, columnNames);
-
-
         JFrame frame = new JFrame("Employee Information");
-
         frame.add(new JScrollPane(table));
-
         frame.setSize(500, 300);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true);
         frame.setLocationRelativeTo(null);
-
-
+        frame.setResizable(false);
     }
 
     public static void pastCompanyWindow() {
 
-        JPanel panel = new JPanel(new GridLayout(3, 2, 5, 5));
+        JPanel panel = new JPanel(new GridLayout(4, 2, 5, 5));
+        JFrame frame = new JFrame("Add past company");
+        JLabel companyLabel = new JLabel("Company ");
+        JLabel startLabel = new JLabel("Start date");
+        JLabel endLabel = new JLabel("End date");
+        JButton submit = new JButton("Continue");
+        JTextField pastCompanyName = new JTextField();
+        JTextField startDate = new JTextField();
+        JTextField endDate = new JTextField();
 
-        JFrame frame = new JFrame("Past Company entry");
-        JLabel pastCompanyName = new JLabel("Past company");
-        JLabel startDate = new JLabel("Start date");
-        JLabel endDate = new JLabel("End date");
-
-        JTextField newPastCompanyName = new JTextField();
-        JTextField newStartDate = new JTextField();
-        JTextField newEndDate = new JTextField();
-
-        org.jdatepicker.util.JDatePickerUtil.getMediumDateFormat();
-
+        frame.setResizable(false);
         frame.setVisible(true);
-        frame.setSize(500,200);
+        frame.setSize(500, 200);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLocationRelativeTo(null);
-
         frame.add(panel);
+
+        panel.add(companyLabel);
         panel.add(pastCompanyName);
-        panel.add(newPastCompanyName);
+        panel.add(startLabel);
         panel.add(startDate);
+        panel.add(endLabel);
         panel.add(endDate);
+        panel.add(submit);
+
+        startDate.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+                char input = e.getKeyChar();
+                if (Character.isAlphabetic(input)) {
+                    e.consume();
+                }
+            }
+        });
+
+        endDate.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+                char input = e.getKeyChar();
+                if (Character.isAlphabetic(input)) {
+                    e.consume();
+                }
+            }
+        });
+
+
+        submit.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String companyName = pastCompanyName.getText();
+                String start = startDate.getText();
+                String end = endDate.getText();
+
+                if (companyName.isEmpty() || start.isEmpty() || end.isEmpty()) {
+                    JOptionPane.showMessageDialog(panel, "All fields required");
+                } else if (!Utility.inputDate(start)) {
+                    JOptionPane.showMessageDialog(panel, "Invalid start date, format example: 2001-01-01");
+                } else if (!Utility.inputDate(end)) {
+                    JOptionPane.showMessageDialog(panel, "Invalid end date, format example: 2001-01-01");
+                } else if (!Utility.checkDatesValid(start, end)) {
+                    JOptionPane.showMessageDialog(panel, "Invalid end or start date, try again");
+                } else if (!Utility.correctDateRange(start, end)) {
+                    JOptionPane.showMessageDialog(panel, "Invalid date range, already exists");
+                }else{
+                    Utility.addCount(1);
+                    Utility.addDate(start,end);
+                    if(Utility.getCounter() != numPastCompanies){
+                        pastCompanyWindow();
+                        frame.dispose();
+                    }else {
+                        frame.dispose();
+                        Gui.showAllInfo(Gui.getEmployeeInfo() + "/" +
+                                Utility.allYears() + "/" + Utility.vacationDays(Utility.allYears()));
+                    }
+                }
+            }
+        });
     }
 
-    public static Object[] inputNameSurname() {
 
-        JPanel panel = new JPanel(new GridLayout(3, 2, 10, 10));
+    public static void inputNameSurname() {
+
+        JPanel panel = new JPanel(new GridLayout(5, 2, 10, 5));
 
         JFrame frame = new JFrame();
 
         JLabel name = new JLabel("Name");
         JLabel surname = new JLabel("Surname");
         JLabel pastCompaniesNum = new JLabel("Number of past companies");
-
+        JLabel role = new JLabel("Role");
+        JButton submit = new JButton("Continue");
 
         JTextField newNameEntry = new JTextField();
         JTextField newSurnameEntry = new JTextField();
         JTextField newPastCompanies = new JTextField();
-
-
-        newPastCompanies.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e){
-                Gui.pastCompanyWindow();
-            }
-        });
+        JTextField newRole = new JTextField();
 
         frame.add(panel);
         panel.add(name);
@@ -137,8 +207,47 @@ public class Gui extends JFrame implements ActionListener {
         panel.add(newSurnameEntry);
         panel.add(pastCompaniesNum);
         panel.add(newPastCompanies);
+        panel.add(role);
+        panel.add(newRole);
+        panel.add(submit);
+
+        newPastCompanies.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+                char input = e.getKeyChar();
+                if (Character.isLetter(input)) {
+                    e.consume();
+                }
+            }
+        });
 
 
+        submit.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (newNameEntry.getText().isEmpty()
+                        || newSurnameEntry.getText().isEmpty()
+                        || newPastCompanies.getText().isEmpty()
+                        || newRole.getText().isEmpty()) {
+                    JOptionPane.showMessageDialog(panel, "All fields required");
+
+                } else if (newNameEntry.getText().length() < 3
+                        || newSurnameEntry.getText().length() < 3) {
+                    JOptionPane.showMessageDialog(panel, "Name and surname must be 3 characters long");
+                } else {
+                    employeeInfo = newNameEntry.getText() + "/"
+                            + newSurnameEntry.getText() + "/"
+                            + newRole.getText();
+                    setEmployeeInfo(employeeInfo);
+                    setNumPastCompanies(Integer.parseInt(newPastCompanies.getText()));
+
+                    frame.dispose();
+                    Gui.pastCompanyWindow();
+                }
+            }
+        });
+
+        frame.setResizable(false);
         frame.setTitle("Input Employee");
         frame.setSize(500, 200);
         frame.setVisible(true);
@@ -146,14 +255,9 @@ public class Gui extends JFrame implements ActionListener {
         frame.getContentPane().setBackground(Color.LIGHT_GRAY);
         frame.setLocationRelativeTo(null);
 
-        Object[] array = new Object[3];
-        array[0] = newNameEntry;
-        array[1] = newNameEntry;
-        array[2] = newNameEntry;
 
-
-        return array;
     }
+
 
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -162,7 +266,24 @@ public class Gui extends JFrame implements ActionListener {
             Gui.inputNameSurname();
         } else {
             dispose();
-            Gui.showAllInfo();
+            Gui.showAllInfo(Gui.getEmployeeInfo());
         }
     }
+
+    public static void setEmployeeInfo(String employeeInfo) {
+        Gui.employeeInfo = employeeInfo;
+    }
+
+    public static String getEmployeeInfo() {
+        return employeeInfo;
+    }
+
+    public static int getNumPastCompanies() {
+        return numPastCompanies;
+    }
+
+    public static void setNumPastCompanies(int numPastCompanies) {
+        Gui.numPastCompanies = numPastCompanies;
+    }
 }
+
